@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logo Canais</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2f3d;
+      --text: #e8eaef;
+      --muted: #8b93a7;
+      --accent: #5b8def;
+      --accent-hover: #7aa3f5;
+      --success: #3ecf8e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 2rem 1.5rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      color: var(--muted);
+      margin-top: 0.35rem;
+      font-size: 0.95rem;
+    }
+
+    .toolbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .search {
+      flex: 1 1 220px;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search:focus {
+      border-color: var(--accent);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .config {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .config label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .config input[type="url"] {
+      flex: 1 1 280px;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .config input[type="url"]:focus {
+      border-color: var(--accent);
+    }
+
+    .save-btn {
+      padding: 0.65rem 1rem;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .save-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .stats {
+      width: 100%;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .category {
+      margin-bottom: 2.5rem;
+    }
+
+    .category-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      text-transform: capitalize;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .card-preview {
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: #12141c;
+    }
+
+    .card-preview img {
+      max-width: 100%;
+      max-height: 72px;
+      object-fit: contain;
+    }
+
+    .card-body {
+      padding: 0.65rem 0.75rem 0.75rem;
+    }
+
+    .card-name {
+      font-size: 0.82rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-url {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      margin-top: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: var(--surface);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Logo Canais</h1>
+    <p>Catálogo de logos. Configure a URL base e clique em uma logo para copiar o link completo.</p>
+  </header>
+
+  <div class="toolbar">
+    <div class="config">
+      <label for="baseUrl">URL base</label>
+      <input type="url" id="baseUrl" value="https://megaxdrop.github.io/logo" placeholder="https://megaxdrop.github.io/logo" autocomplete="off" spellcheck="false">
+      <button type="button" class="save-btn" id="saveBaseUrl">Salvar</button>
+    </div>
+    <input type="search" class="search" id="search" placeholder="Buscar logo ou URL..." autocomplete="off">
+    <div class="filters" id="filters"></div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <main id="main"></main>
+  <div class="toast" id="toast">URL copiada!</div>
+
+  <script>
+    const LOGOS = [
+      "eventos/c-copa-do-mundo-2026.png",
+      "geral/c-eua.png",
+      "geral/c-franca.png",
+      "geral/c-globo.png",
+      "geral/c-portugal.png",
+      "geral/c-redetv.png",
+      "geral/c-sbt.png",
+      "hbo/c-hbo.png",
+      "hbo/c-hbo2.png",
+      "hbo/c-hbo-family.png",
+      "hbo/c-hbo-mundi.png",
+      "hbo/c-hbo-plus.png",
+      "hbo/c-hbo-pop.png",
+      "hbo/c-hbo-signature.png",
+      "hbo/c-hbo-xtreme.png",
+      "reality/c-a-fazenda.png",
+      "reality/c-bbb.png",
+      "reality/c-casa-do-patrao.png"
+    ];
+
+    const BASE_URL_KEY = "logo-canais-base-url";
+    const DEFAULT_BASE_URL = "https://megaxdrop.github.io/logo";
+
+    const searchEl = document.getElementById("search");
+    const baseUrlEl = document.getElementById("baseUrl");
+    const saveBaseUrlEl = document.getElementById("saveBaseUrl");
+    const filtersEl = document.getElementById("filters");
+    const mainEl = document.getElementById("main");
+    const statsEl = document.getElementById("stats");
+    const toastEl = document.getElementById("toast");
+
+    let activeCategory = "all";
+    let toastTimer;
+
+    function getBaseUrl() {
+      return baseUrlEl.value.trim();
+    }
+
+    function buildLogoUrl(path) {
+      const base = getBaseUrl().replace(/\/+$/, "");
+      if (!base) return path;
+      return base + "/" + path.replace(/^\/+/, "");
+    }
+
+    function saveBaseUrl() {
+      const value = getBaseUrl();
+      localStorage.setItem(BASE_URL_KEY, value);
+      showToast(value ? "URL base salva" : "URL base removida");
+      render();
+    }
+
+    function loadBaseUrl() {
+      baseUrlEl.value = localStorage.getItem(BASE_URL_KEY) || DEFAULT_BASE_URL;
+    }
+
+    function displayName(path) {
+      const base = path.split("/").pop().replace(/^c-/, "").replace(/\.[^.]+$/, "");
+      return base.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+
+    function categoryOf(path) {
+      return path.split("/")[0];
+    }
+
+    function categories() {
+      return [...new Set(LOGOS.map(categoryOf))].sort();
+    }
+
+    function showToast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2000);
+    }
+
+    async function copyLogoUrl(path) {
+      const url = buildLogoUrl(path);
+      if (!getBaseUrl()) {
+        showToast("Configure e salve a URL base antes de copiar");
+        baseUrlEl.focus();
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast("URL copiada!");
+      } catch {
+        showToast("Não foi possível copiar");
+      }
+    }
+
+    function filteredLogos() {
+      const query = searchEl.value.trim().toLowerCase();
+      return LOGOS.filter((path) => {
+        const cat = categoryOf(path);
+        if (activeCategory !== "all" && cat !== activeCategory) return false;
+        if (!query) return true;
+        const name = displayName(path).toLowerCase();
+        const url = buildLogoUrl(path).toLowerCase();
+        return name.includes(query) || path.toLowerCase().includes(query) || url.includes(query);
+      });
+    }
+
+    function renderFilters() {
+      const cats = categories();
+      filtersEl.innerHTML = "";
+
+      const allBtn = document.createElement("button");
+      allBtn.type = "button";
+      allBtn.className = "filter-btn active";
+      allBtn.textContent = "Todos";
+      allBtn.dataset.category = "all";
+      allBtn.addEventListener("click", () => setCategory("all"));
+      filtersEl.appendChild(allBtn);
+
+      for (const cat of cats) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "filter-btn";
+        btn.textContent = cat;
+        btn.dataset.category = cat;
+        btn.addEventListener("click", () => setCategory(cat));
+        filtersEl.appendChild(btn);
+      }
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      for (const btn of filtersEl.querySelectorAll(".filter-btn")) {
+        btn.classList.toggle("active", btn.dataset.category === cat);
+      }
+      render();
+    }
+
+    function render() {
+      const logos = filteredLogos();
+      statsEl.textContent = logos.length + " logo" + (logos.length !== 1 ? "s" : "") + " exibida" + (logos.length !== 1 ? "s" : "");
+
+      if (logos.length === 0) {
+        mainEl.innerHTML = '<div class="empty">Nenhuma logo encontrada.</div>';
+        return;
+      }
+
+      const grouped = new Map();
+      for (const path of logos) {
+        const cat = categoryOf(path);
+        if (!grouped.has(cat)) grouped.set(cat, []);
+        grouped.get(cat).push(path);
+      }
+
+      mainEl.innerHTML = "";
+      for (const [cat, paths] of [...grouped.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+        const section = document.createElement("section");
+        section.className = "category";
+
+        const title = document.createElement("h2");
+        title.className = "category-title";
+        title.textContent = cat;
+        section.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "grid";
+
+        for (const path of paths.sort()) {
+          const url = buildLogoUrl(path);
+          const card = document.createElement("article");
+          card.className = "card";
+          card.title = "Clique para copiar: " + url;
+
+          card.innerHTML =
+            '<div class="card-preview"><img src="' + path + '" alt="' + displayName(path) + '" loading="lazy"></div>' +
+            '<div class="card-body">' +
+              '<div class="card-name">' + displayName(path) + '</div>' +
+              '<div class="card-url">' + url + '</div>' +
+            '</div>';
+
+          card.addEventListener("click", () => copyLogoUrl(path));
+          grid.appendChild(card);
+        }
+
+        section.appendChild(grid);
+        mainEl.appendChild(section);
+      }
+    }
+
+    searchEl.addEventListener("input", render);
+    saveBaseUrlEl.addEventListener("click", saveBaseUrl);
+    baseUrlEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") saveBaseUrl();
+    });
+
+    loadBaseUrl();
+    renderFilters();
+    render();
+  </script>
+</body>
+</html>

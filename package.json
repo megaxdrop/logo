@@ -1,4 +1,11 @@
 {
+  "name": "logo-canais",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "compress": "node compress.js",
+    "serve": "npx --yes serve . -p 8080"
+  },
   "dependencies": {
     "sharp": "^0.34.5"
   }
