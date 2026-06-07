@@ -116,7 +116,7 @@
       white-space: nowrap;
     }
 
-    .config input[type="url"] {
+    .config input[type="text"] {
       flex: 1 1 280px;
       padding: 0.65rem 0.9rem;
       border: 1px solid var(--border);
@@ -129,7 +129,7 @@
       transition: border-color 0.15s;
     }
 
-    .config input[type="url"]:focus {
+    .config input[type="text"]:focus {
       border-color: var(--accent);
     }
 
@@ -269,7 +269,7 @@
   <div class="toolbar">
     <div class="config">
       <label for="baseUrl">URL base</label>
-      <input type="url" id="baseUrl" value="https://megaxdrop.github.io/logo" placeholder="https://megaxdrop.github.io/logo" autocomplete="off" spellcheck="false">
+      <input type="text" id="baseUrl" value="https://megaxdrop.github.io/logo" placeholder="https://megaxdrop.github.io/logo" autocomplete="off" spellcheck="false">
       <button type="button" class="save-btn" id="saveBaseUrl">Salvar</button>
     </div>
     <input type="search" class="search" id="search" placeholder="Buscar logo ou URL..." autocomplete="off">
@@ -316,20 +316,28 @@
     let activeCategory = "all";
     let toastTimer;
 
-    function getBaseUrl() {
-      return baseUrlEl.value.trim();
+    function normalizeBaseUrl(raw) {
+      let url = (raw || DEFAULT_BASE_URL).trim().replace(/\/+$/, "");
+      if (!url) return DEFAULT_BASE_URL;
+      if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+      return url;
     }
 
-    function buildLogoUrl(path) {
-      const base = getBaseUrl().replace(/\/+$/, "");
-      if (!base) return path;
-      return base + "/" + path.replace(/^\/+/, "");
+    function getBaseUrl() {
+      return normalizeBaseUrl(baseUrlEl.value);
+    }
+
+    function buildLogoUrl(relativePath) {
+      const base = getBaseUrl();
+      const file = String(relativePath).replace(/^\/+/, "");
+      return base + "/" + file;
     }
 
     function saveBaseUrl() {
       const value = getBaseUrl();
+      baseUrlEl.value = value;
       localStorage.setItem(BASE_URL_KEY, value);
-      showToast(value ? "URL base salva" : "URL base removida");
+      showToast("URL base salva");
       render();
     }
 
@@ -357,19 +365,21 @@
       toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2000);
     }
 
-    async function copyLogoUrl(path) {
-      const url = buildLogoUrl(path);
-      if (!getBaseUrl()) {
-        showToast("Configure e salve a URL base antes de copiar");
-        baseUrlEl.focus();
-        return;
-      }
+    async function copyText(text) {
       try {
-        await navigator.clipboard.writeText(url);
-        showToast("URL copiada!");
+        await navigator.clipboard.writeText(text);
       } catch {
-        showToast("Não foi possível copiar");
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
       }
+      showToast("Copiado: " + text);
     }
 
     function filteredLogos() {
@@ -448,16 +458,17 @@
           const url = buildLogoUrl(path);
           const card = document.createElement("article");
           card.className = "card";
+          card.dataset.fullUrl = url;
           card.title = "Clique para copiar: " + url;
 
           card.innerHTML =
-            '<div class="card-preview"><img src="' + path + '" alt="' + displayName(path) + '" loading="lazy"></div>' +
+            '<div class="card-preview"><img src="' + path + '" alt="' + displayName(path) + '" loading="lazy" draggable="false"></div>' +
             '<div class="card-body">' +
               '<div class="card-name">' + displayName(path) + '</div>' +
               '<div class="card-url">' + url + '</div>' +
             '</div>';
 
-          card.addEventListener("click", () => copyLogoUrl(path));
+          card.addEventListener("click", (e) => copyText(e.currentTarget.dataset.fullUrl));
           grid.appendChild(card);
         }
 
@@ -467,6 +478,7 @@
     }
 
     searchEl.addEventListener("input", render);
+    baseUrlEl.addEventListener("input", render);
     saveBaseUrlEl.addEventListener("click", saveBaseUrl);
     baseUrlEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter") saveBaseUrl();
